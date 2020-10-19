@@ -1,5 +1,6 @@
 package com.challenge.mutantes.controller;
 
+import com.challenge.mutantes.model.HumanRequest;
 import com.challenge.mutantes.service.HumanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,9 @@ public class HumanController implements HumanApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> isMutant(@Valid String[] dnaRequest) {
+    public ResponseEntity<Boolean> isMutant(@Valid HumanRequest request) {
 
-        boolean isMutant = humanService.isMutant(dnaRequest);
+        boolean isMutant = humanService.isMutant(request.getDna());
 
         if(isMutant) {
            return ResponseEntity.ok(isMutant);

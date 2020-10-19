@@ -1,5 +1,6 @@
 package com.challenge.mutantes.controller;
 
+import com.challenge.mutantes.model.HumanRequest;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,6 @@ public interface HumanApi {
     })
     @RequestMapping(value="/human/isMutant", method= RequestMethod.POST)
     ResponseEntity<Boolean> isMutant(@ApiParam(value="DNA sequence")
-                                            @Valid @RequestBody(required=true) String[] dnaRequest);
+                                            @Valid @RequestBody(required=true) HumanRequest request);
 
 }
