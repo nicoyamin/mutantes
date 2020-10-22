@@ -1,5 +1,6 @@
 package com.challenge.mutantes.controller;
 
+import com.challenge.mutantes.exception.ResourceFormatException;
 import com.challenge.mutantes.model.HumanRequest;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,6 @@ public interface HumanApi {
     })
     @RequestMapping(value="/human/isMutant", method= RequestMethod.POST)
     ResponseEntity<Boolean> isMutant(@ApiParam(value="DNA sequence")
-                                            @Valid @RequestBody(required=true) HumanRequest request);
+                                            @Valid @RequestBody(required=true) HumanRequest request) throws ResourceFormatException;
 
 }

@@ -1,5 +1,6 @@
 package com.challenge.mutantes.controller;
 
+import com.challenge.mutantes.exception.ResourceFormatException;
 import com.challenge.mutantes.model.HumanRequest;
 import com.challenge.mutantes.service.HumanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class HumanController implements HumanApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> isMutant(@Valid HumanRequest request) {
+    public ResponseEntity<Boolean> isMutant(@Valid HumanRequest request) throws ResourceFormatException {
 
         boolean isMutant = humanService.isMutant(request.getDna());
 
