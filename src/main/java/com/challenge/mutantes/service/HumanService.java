@@ -25,8 +25,9 @@ public class HumanService {
     static final List<Character> NITROGENOUS_BASES = Arrays.asList('A', 'T', 'C', 'G');
     static final int PATTERN_LENGTH = 4;
     static final int MUTANT_BASES = 2;
-    static final String DNA_SEQUENCE_SHORT = "Dna base length and bases amount should be at least 4";
-    static final String INCORRECT_BASE = " dna base is incorrect. Nitrogenous bases should be A, T, C or G";
+    static final String DNA_SEQUENCE_TOO_SHORT_EXCEPTION = "Dna base length and bases amount should be at least 4";
+    static final String INCORRECT_BASE_EXCEPTION = " is not a DNA base. Nitrogenous bases should be A, T, C or G";
+    static final String INCONSISTENT_DNA_SEQUENCE_EXCEPTION = "Dna sequences length must be equal to the sequences' amount";
 
 
 
@@ -54,7 +55,7 @@ public class HumanService {
     private static char[][] validateDna(String[] dna) throws ResourceFormatException {
 
         if(dna.length < PATTERN_LENGTH) {
-            throw new ResourceFormatException(DNA_SEQUENCE_SHORT);
+            throw new ResourceFormatException(DNA_SEQUENCE_TOO_SHORT_EXCEPTION);
         }
 
         int strandLength =  dna.length;
@@ -63,15 +64,15 @@ public class HumanService {
 
         //Step 1 - Convert dna sequence to a matrix for traversal
         for(int row = 0; row < strandLength; row++) {
-            if(dna[row].length() < PATTERN_LENGTH) {
-                throw new ResourceFormatException(DNA_SEQUENCE_SHORT);
+            if(dna[row].length() != strandLength) {
+                throw new ResourceFormatException(INCONSISTENT_DNA_SEQUENCE_EXCEPTION);
             }
-            char[] dnaBase = dna[row].toCharArray();
+            char[] dnaBase = dna[row].toUpperCase().toCharArray();
             for(int column = 0; column < strandLength; column++) {
                 if(!NITROGENOUS_BASES.contains(dnaBase[column])) {
-                    throw new ResourceFormatException(dnaBase[column] + INCORRECT_BASE);
+                    throw new ResourceFormatException(dnaBase[column] + INCORRECT_BASE_EXCEPTION);
                 }
-                dnaMatrix[row][column] = toUpperCase(dnaBase[column]);
+                dnaMatrix[row][column] = dnaBase[column];
             }
         }
 
