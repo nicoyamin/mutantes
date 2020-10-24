@@ -1,6 +1,7 @@
 package com.challenge.mutantes.entity;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.TypeDefs;
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Generated
 @Entity
 @Table(name = "human", schema = "mutantsdb")
 @Getter

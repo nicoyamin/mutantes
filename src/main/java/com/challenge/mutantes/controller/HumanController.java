@@ -48,12 +48,13 @@ public class HumanController implements HumanApi {
                 humanCount++;
             }
         }
-        String testResults = new StringBuilder(dnaAmount)
+        String testResults = new StringBuilder()
+                .append(dnaAmount)
                 .append(" DNAs were tested, out of which ")
                 .append(mutantCount)
                 .append(" are mutant and ")
                 .append(humanCount)
-                .append("are human.").toString();
+                .append(" are human.").toString();
 
         return ResponseEntity.ok(testResults);
     }

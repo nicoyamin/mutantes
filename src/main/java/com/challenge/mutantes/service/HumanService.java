@@ -12,8 +12,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.Character.toUpperCase;
-
 @Service
 public class HumanService {
 
@@ -27,9 +25,12 @@ public class HumanService {
     static final int MUTANT_BASES = 2;
     static final String DNA_SEQUENCE_TOO_SHORT_EXCEPTION = "Dna base length and bases amount should be at least 4";
     static final String INCORRECT_BASE_EXCEPTION = " is not a DNA base. Nitrogenous bases should be A, T, C or G";
-    static final String INCONSISTENT_DNA_SEQUENCE_EXCEPTION = "Dna sequences length must be equal to the sequences' amount";
+    static final String INCONSISTENT_DNA_SEQUENCE_EXCEPTION = "Dna sequences length must be equal to the sequences amount";
 
 
+    public HumanService(HumanRepository humanRepository) {
+        this.humanRepository = humanRepository;
+    }
 
     @Transactional
     public boolean isMutant(String[] dna) throws ResourceFormatException {
