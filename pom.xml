@@ -94,6 +94,36 @@
 			<artifactId>hibernate-types-52</artifactId>
 			<version>2.10.0</version>
 		</dependency>
+
+		<!-- The client -->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<!-- Hotspot JVM metrics-->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_hotspot</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<!-- Exposition HTTPServer-->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_httpserver</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<!-- Pushgateway exposition-->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_pushgateway</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>1.5.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
