@@ -26,7 +26,9 @@ Challenge MercadoLibre
 - [Metricas](#Metricas)
   - [Prometheus](#Prometheus)
   - [Grafana](#Grafana)
-  - [Cobertura](#cobertura)
+- [Unit testing](#Unit-testing)
+  - [Prometheus](#Prometheus)
+  - [Grafana](#Grafana)
 
 ## Ejercicio
 
@@ -212,7 +214,9 @@ utilizacion, requests y recursos del server, ademas de las cuentas de ADN de mut
 **IMPORTANTE!** Al depender del servicio de Prometheus como Datasoruce, si este se apaga por inactividad, es posible que las metricas se desactualicen, 
 por lo cual se recomienda cargar entradas de ADN nuevas para actualzair la informacion del dashboard.
 
+## Unit testing
 
+Se utilizó Junit 5 para realizar testeos automaticos, y Mockito para el mockeo de dependencias. Se procuró cubrir la mayor cantidad de casos posibles, y pasar por todos los branches en el codigo. Solo quedan pendientes de testing la clase Main y de configuracion de Swagger. El coverage report fue generado por [JaCoCo](https://www.eclemma.org/jacoco/) y puede encontrarse en la carpeta reports de este repositorio.
 
 #### Automaticos
 
