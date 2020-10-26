@@ -27,8 +27,7 @@ Challenge MercadoLibre
   - [Prometheus](#Prometheus)
   - [Grafana](#Grafana)
 - [Unit testing](#Unit-testing)
-  - [Prometheus](#Prometheus)
-  - [Grafana](#Grafana)
+- [Comentarios y consideraciones finales](#Comentarios-y-consideraciones-finales)
 
 ## Ejercicio
 
@@ -216,38 +215,19 @@ por lo cual se recomienda cargar entradas de ADN nuevas para actualzair la infor
 
 ## Unit testing
 
-Se utilizó Junit 5 para realizar testeos automaticos, y Mockito para el mockeo de dependencias. Se procuró cubrir la mayor cantidad de casos posibles, y pasar por todos los branches en el codigo. Solo quedan pendientes de testing la clase Main y de configuracion de Swagger. El coverage report fue generado por [JaCoCo](https://www.eclemma.org/jacoco/) y puede encontrarse en la carpeta reports de este repositorio.
+Se utilizó Junit 5 para realizar testeos automaticos, y Mockito para el mockeo de dependencias. Se procuró cubrir la mayor cantidad de casos posibles, y pasar por todos los branches en el codigo. Solo quedan pendientes de testing la clase Main y de configuracion de Swagger. El coverage report fue generado por [JaCoCo](https://www.eclemma.org/jacoco/) y puede encontrarse en la carpeta jacoco de este repositorio.
 
-#### Automaticos
+[Reporte de coverage](jacoco/index.html)
 
-Para la ejecucion de los test automaticos utilice jUnit.
+![Coverage_screenshot](Coverage.PNG)
 
-Para poder probar los componentes de base de datos utilice una base de datos MongoDB embebida, esta se levanta durante 
-el test y luego se destruye.
-De esta forma no necesito tener una instancia de base de datos levantada, ni hosteada en algun servidor.
+## Comentarios y consideraciones finales
 
-Ademas me aseguro de que la base de datos siempre este consistente en cada ejecucion de los test.
+El proyecto puede ser mejorado en muchos aspectos, los cuales pueden hablarse durante la entrevista de review. Entre ellos, pueden mencionarse:
 
-#### Scripts
+- Rendimiento de la API: Quedaron pendientes pruebas de carga usando JMeter. Tenia pensado incluso integrar estas metricas en un panel de Grafana para que puedan observarse desde alli, sin embargo por cuestiones de tiempo esto no pudo concretarse. Sin embargo, el rendimiento de los requests es aceptable desde el host en cloud, debido a que al parecer esta optimizado para abrir hilos de acuerdo al trafico y balancea la carga de manera automatica, ademas de que la BD Postgre esta optimizada para funcionar con Heroku. Sin embargo, no ocurre lo mismo al ejecutar la aplicacion localmente, donde se observa un renidmiento menor.
+- Queda pendiente la implementacion de un pipeline para CI/CD
+- Implementacion de una BD local (se consideró usar H2) para testing.
 
-Cree dos shell scripts para invocar a la API en forma masiva (uno por servicio) y ver los tiempos de respuesta de cada 
-invocacion.
-Los scripts utilizan el comando Unix _parallel_, en caso de ejecutar en entorno Mac OS se puede instalar el comando 
-ejecutando en una terminal el siguiente comando: 
+Ante cualquier duda, consulta o informacion, no duden en contactarme por email: nicoyamin@hotmail.com.ar
 
-```
-brew install parallel
-```
-
-Para el servicio de verificacion de ADN, el script envia en el body de la peticion la secuencia de ADN que se encuentra
-en el archivo [dna-mutant.json](./scripts/invoke-mutants.sh).
-
-La cantidad de peticiones en paralelo que se quieren ejecutar se corresponde con el valor que se encuentra seguido del 
-comando _seq_: seq *1000* | parallel....
-
-#### Cobertura
-
-Si bien la cobertura de codigo en la herramienta Codecov muestra un 70%, ejecutando los test localmente con la herramienta
-Jacoco nos da 78%.
-
-![coverage](./doc/images/coverage.png)
