@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,7 @@ class HumanServiceTest {
     String[] humanDna = new String[]{"GCAAAG","AAACAT","TATAAG","TTAAGT","ACAGCA","AGCCCC"};
     String[] mutantDna = new String[]{"ATGCGA","CAGTTC","TTATGT","AAAAGG","CCCCTA","TCACTG"};
     String[] mutantDnaDuplicatePattern = new String[] {"CCCCTC","CTAGTC","GTAATC","GTCGCC","ACGTGA","ACCTAT"};
+    String[] humanDnaLongPattern = new String[] {"TTTTTT","ATATAT","CGCGCG","ACACAC","GAGAGA","TCACAG"};
     String[] shortDna = new String[]{"AAA", "TTT", "CCC"};
     String[] wrongDna = new String[]{"AAAA", "TTTT", "CCCC", "ZZZZ"};
     String[] inconsistentDna = new String[]{"CGGTTT","GCTATT","AGGTTT","GGGGCT","AATATG","ATCAG"};
@@ -58,6 +60,16 @@ class HumanServiceTest {
         when(repository.findHumanByDna(any(String[].class))).thenReturn(null);
 
         boolean result = service.isMutant(humanDna);
+
+        assertEquals(false, result);
+    }
+
+    @Test
+    public void shouldTestNewHumanDnaWithSingleLongPatternAndReturnFalse() throws ResourceFormatException {
+
+        when(repository.findHumanByDna(any(String[].class))).thenReturn(null);
+
+        boolean result = service.isMutant(humanDnaLongPattern);
 
         assertEquals(false, result);
     }

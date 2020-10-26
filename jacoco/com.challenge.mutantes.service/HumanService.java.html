@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HumanService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mutantes</a> &gt; <a href="index.source.html" class="el_package">com.challenge.mutantes.service</a> &gt; <span class="el_source">HumanService.java</span></div><h1>HumanService.java</h1><pre class="source lang-java linenums">package com.challenge.mutantes.service;
+
+import com.challenge.mutantes.entity.Human;
+import com.challenge.mutantes.exception.ResourceFormatException;
+import com.challenge.mutantes.repository.HumanRepository;
+import com.challenge.mutantes.utilities.Direction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+@Service
+public class HumanService {
+
+    @Autowired
+    HumanRepository humanRepository;
+
+<span class="fc" id="L22">    static final List&lt;Character&gt; NITROGENOUS_BASES = Arrays.asList('A', 'T', 'C', 'G');</span>
+    static final int PATTERN_LENGTH = 4;
+    static final String DNA_SEQUENCE_TOO_SHORT_EXCEPTION = &quot;Dna base length and bases amount should be at least 4&quot;;
+    static final String INCORRECT_BASE_EXCEPTION = &quot; is not a DNA base. Nitrogenous bases should be A, T, C or G&quot;;
+    static final String INCONSISTENT_DNA_SEQUENCE_EXCEPTION = &quot;Dna sequences length must be equal to the sequences amount&quot;;
+
+
+
+<span class="fc" id="L30">    public HumanService(HumanRepository humanRepository) {</span>
+<span class="fc" id="L31">        this.humanRepository = humanRepository;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Transactional
+    public boolean isMutant(String[] dna) throws ResourceFormatException {
+
+<span class="fc" id="L37">        Boolean existingHuman = humanRepository.findHumanByDna(dna);</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if(existingHuman != null) {</span>
+<span class="fc" id="L40">            return existingHuman;</span>
+        }
+
+<span class="fc" id="L43">        char[][] dnaMatrix = validateDna(dna);</span>
+<span class="fc" id="L44">        boolean isMutant= processDna(dnaMatrix);</span>
+
+<span class="fc" id="L46">        Human human = new Human();</span>
+<span class="fc" id="L47">        human.setDna(dna);</span>
+<span class="fc" id="L48">        human.setIsMutant(isMutant);</span>
+
+<span class="fc" id="L50">        humanRepository.save(human);</span>
+
+<span class="fc" id="L52">        return isMutant;</span>
+    }
+
+    private static char[][] validateDna(String[] dna) throws ResourceFormatException {
+
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(dna.length &lt; PATTERN_LENGTH) {</span>
+<span class="fc" id="L58">            throw new ResourceFormatException(DNA_SEQUENCE_TOO_SHORT_EXCEPTION);</span>
+        }
+<span class="fc" id="L60">        int strandLength =  dna.length;</span>
+
+        //Step 1 - Convert dna sequence to matrix
+<span class="fc" id="L63">        char[][] dnaMatrix = new char[strandLength][strandLength];</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for(int row = 0; row &lt; strandLength; row++) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if(dna[row].length() != strandLength) {</span>
+<span class="fc" id="L67">                throw new ResourceFormatException(INCONSISTENT_DNA_SEQUENCE_EXCEPTION);</span>
+            }
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            for(int column = 0; column &lt; strandLength; column++) {</span>
+<span class="fc" id="L70">                char currentBase = Character.toUpperCase(dna[row].charAt(column));</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if(!NITROGENOUS_BASES.contains(currentBase)) {</span>
+<span class="fc" id="L72">                    throw new ResourceFormatException(currentBase + INCORRECT_BASE_EXCEPTION);</span>
+                }
+<span class="fc" id="L74">                dnaMatrix[row][column] = currentBase;</span>
+            }
+        }
+<span class="fc" id="L77">        return dnaMatrix;</span>
+    }
+
+
+    private static boolean processDna(char[][] dna) {
+
+<span class="fc" id="L83">        List&lt;Point&gt; previousMatch = new ArrayList&lt;&gt;();</span>
+
+        //Step 2 -  Start traversing the matrix horizontally
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        for(int row = 0; row &lt; dna.length; row++) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            for(int column = 0; column &lt; dna.length; column++) {</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                for (Direction direction : Direction.values()) {</span>
+        //Step 3 - Check the foru required direction
+<span class="fc" id="L90">                    List&lt;Point&gt; pattern = checkDirection(new Point(row, column), dna, direction);</span>
+         //Step 4 - If pattern is at least size 4, we have a possible match. We should check if it's not a duplicated pattern
+         //or a subpattern of an existing larger  one.
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                    if(pattern.size() &gt;= PATTERN_LENGTH) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                        if(previousMatch.isEmpty()) {</span>
+<span class="fc" id="L95">                            previousMatch = pattern;</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                        }  else if(!previousMatch.containsAll(pattern)) {</span>
+        //Step 5 - If we hit two patterns, then DNA is mutant.
+<span class="fc" id="L98">                            return true;</span>
+                        }
+                    }
+                }
+
+            }
+
+            }
+
+    //Step 5 - if we don't have at least two matches, input is human DNA
+<span class="fc" id="L108">        return false;</span>
+    }
+
+    private static List&lt;Point&gt; checkDirection(Point basepoint, char[][] dna, Direction direction) {
+<span class="fc" id="L112">        List&lt;Point&gt; pattern = new ArrayList&lt;Point&gt;();</span>
+<span class="fc" id="L113">        Point nextPoint = new Point(basepoint.x, basepoint.y);</span>
+<span class="fc" id="L114">        boolean inBounds = true;</span>
+
+<span class="fc bfc" id="L116" title="All 4 branches covered.">        while(inBounds &amp;&amp; dna[basepoint.x][basepoint.y] == dna[nextPoint.x][nextPoint.y]) {</span>
+<span class="fc" id="L117">            pattern.add(new Point(nextPoint.x, nextPoint.y));</span>
+<span class="fc" id="L118">            nextPoint.setLocation(nextPoint.x + direction.label.x, nextPoint.y + direction.label.y);</span>
+<span class="pc bpc" id="L119" title="1 of 8 branches missed.">            inBounds = nextPoint.x &gt;= 0 &amp;&amp; nextPoint.y &gt;= 0 &amp;&amp; nextPoint.x &lt; dna.length &amp;&amp; nextPoint.y &lt; dna.length;</span>
+        }
+
+<span class="fc" id="L122">        return pattern;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

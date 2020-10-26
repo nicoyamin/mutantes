@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HumanController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mutantes</a> &gt; <a href="index.source.html" class="el_package">com.challenge.mutantes.controller</a> &gt; <span class="el_source">HumanController.java</span></div><h1>HumanController.java</h1><pre class="source lang-java linenums">package com.challenge.mutantes.controller;
+
+import com.challenge.mutantes.exception.ResourceFormatException;
+import com.challenge.mutantes.model.HumanRequest;
+import com.challenge.mutantes.service.HumanService;
+import com.challenge.mutantes.utilities.MutantUtils;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.Counter;
+import io.prometheus.client.Histogram;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+
+@RestController
+public class HumanController implements HumanApi {
+
+
+    CollectorRegistry registry;
+    private HumanService humanService;
+    private final Counter countMutantDna;
+    private final Counter countHumanDna;
+    private final Histogram singleRequestLatency;
+    private final Histogram multipleRequestLatency;
+
+
+    @Autowired
+<span class="fc" id="L30">    public HumanController(HumanService humanService, CollectorRegistry registry) {</span>
+<span class="fc" id="L31">        this.humanService = humanService;</span>
+<span class="fc" id="L32">        countMutantDna = Counter.build().name(&quot;count_mutant_dna&quot;).help(&quot;Mutants detected&quot;).register(registry);</span>
+<span class="fc" id="L33">        countHumanDna = Counter.build().name(&quot;count_human_dna&quot;).help(&quot;Humans detected&quot;).register(registry);</span>
+<span class="fc" id="L34">        singleRequestLatency = Histogram.build().name(&quot;single_dna_analysis_duration&quot;).help(&quot;How long it takes for a single DNA to be analyzed&quot;).register(registry);</span>
+<span class="fc" id="L35">        multipleRequestLatency = Histogram.build().name(&quot;multiple_dna_analysis_duration&quot;).help(&quot;How long it takes for multiple DNAs to be analyzed&quot;).register(registry);</span>
+<span class="fc" id="L36">    }</span>
+
+    @Override
+    public ResponseEntity&lt;Boolean&gt; isMutant(@Valid HumanRequest request) throws ResourceFormatException {
+
+<span class="fc" id="L41">        Histogram.Timer timer = singleRequestLatency.startTimer();</span>
+
+<span class="fc" id="L43">        boolean isMutant = humanService.isMutant(request.getDna());</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        if(isMutant) {</span>
+<span class="fc" id="L46">            timer.observeDuration();</span>
+<span class="fc" id="L47">            countMutantDna.inc();</span>
+<span class="fc" id="L48">           return ResponseEntity.ok(isMutant);</span>
+        } else {
+<span class="fc" id="L50">            timer.observeDuration();</span>
+<span class="fc" id="L51">            countHumanDna.inc();</span>
+<span class="fc" id="L52">            return new ResponseEntity&lt;&gt;(isMutant, HttpStatus.FORBIDDEN);</span>
+        }
+
+    }
+
+    @Override
+    public ResponseEntity&lt;String&gt; testRandomDna(@Valid int dnaAmount, @Valid int dnaSize) throws ResourceFormatException {
+<span class="fc" id="L59">        Histogram.Timer timer = multipleRequestLatency.startTimer();</span>
+<span class="fc" id="L60">        int mutantCount = 0;</span>
+<span class="fc" id="L61">        int humanCount = 0;</span>
+
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        for(int i=0; i&lt;dnaAmount; i++) {</span>
+<span class="fc" id="L64">            boolean isMutant = humanService.isMutant(MutantUtils.generateDnaSequence(dnaSize));</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (isMutant) {</span>
+<span class="fc" id="L66">                mutantCount++;</span>
+<span class="fc" id="L67">                countMutantDna.inc();</span>
+            } else {
+<span class="fc" id="L69">                humanCount++;</span>
+<span class="fc" id="L70">                countHumanDna.inc();</span>
+            }
+        }
+<span class="fc" id="L73">        String testResults = new StringBuilder()</span>
+<span class="fc" id="L74">                .append(dnaAmount)</span>
+<span class="fc" id="L75">                .append(&quot; DNAs were tested, out of which &quot;)</span>
+<span class="fc" id="L76">                .append(mutantCount)</span>
+<span class="fc" id="L77">                .append(&quot; are mutant and &quot;)</span>
+<span class="fc" id="L78">                .append(humanCount)</span>
+<span class="fc" id="L79">                .append(&quot; are human.&quot;).toString();</span>
+
+<span class="fc" id="L81">        timer.observeDuration();</span>
+<span class="fc" id="L82">        return ResponseEntity.ok(testResults);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

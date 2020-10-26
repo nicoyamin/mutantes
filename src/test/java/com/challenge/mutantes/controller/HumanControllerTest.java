@@ -3,6 +3,7 @@ package com.challenge.mutantes.controller;
 import com.challenge.mutantes.exception.ResourceFormatException;
 import com.challenge.mutantes.model.HumanRequest;
 import com.challenge.mutantes.service.HumanService;
+import io.prometheus.client.CollectorRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +24,10 @@ class HumanControllerTest {
 
     @Mock
     HumanService service;
+
+    @Mock
+    CollectorRegistry registry;
+
 
     HumanController controller;
 
@@ -32,7 +38,7 @@ class HumanControllerTest {
         MockitoAnnotations.initMocks(this);
         request = new HumanRequest();
         request.setDna(new String[0]);
-        controller= new HumanController(service);
+        controller= new HumanController(service,registry);
     }
 
     @Test
