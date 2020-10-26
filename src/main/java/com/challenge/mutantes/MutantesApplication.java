@@ -1,7 +1,5 @@
 package com.challenge.mutantes;
 
-import com.challenge.mutantes.controller.HumanController;
-import com.challenge.mutantes.service.HumanService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

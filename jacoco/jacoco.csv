@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+mutantes,com.challenge.mutantes.utilities,Direction,0,72,0,0,0,8,0,2,0,2
+mutantes,com.challenge.mutantes.utilities,MutantUtils,3,22,0,2,1,5,1,2,1,1
+mutantes,com.challenge.mutantes,MutantesApplication,11,0,0,0,4,0,2,0,2,0
+mutantes,com.challenge.mutantes.exception,ResourceFormatException,0,15,0,0,0,5,0,2,0,2
+mutantes,com.challenge.mutantes.exception,RestExceptionHandler,0,49,0,0,0,10,0,5,0,5
+mutantes,com.challenge.mutantes.exception,ApiError,0,30,0,0,0,14,0,4,0,4
+mutantes,com.challenge.mutantes.configuration,SwaggerConfiguration,30,0,0,0,11,0,3,0,3,0
+mutantes,com.challenge.mutantes.controller,HumanController,0,144,0,6,0,35,0,6,0,3
+mutantes,com.challenge.mutantes.service,HumanService,0,279,1,35,0,46,1,23,0,6

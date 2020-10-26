@@ -3,21 +3,14 @@ package com.challenge.mutantes.service;
 import com.challenge.mutantes.entity.Human;
 import com.challenge.mutantes.exception.ResourceFormatException;
 import com.challenge.mutantes.repository.HumanRepository;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.graph.ImmutableValueGraph;
-import com.google.common.graph.MutableValueGraph;
-import com.google.common.graph.ValueGraphBuilder;
+import com.challenge.mutantes.utilities.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
 import java.awt.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -26,15 +19,12 @@ public class HumanService {
     @Autowired
     HumanRepository humanRepository;
 
-    static final int[] ROWS = {-1,-1,-1,0,1,1,1,0};
-    static final int[] COLUMNS = {-1,0,1,1,1,0,-1,-1};
     static final List<Character> NITROGENOUS_BASES = Arrays.asList('A', 'T', 'C', 'G');
     static final int PATTERN_LENGTH = 4;
-    static final int MUTANT_BASES = 2;
-    static final double DIAG_DISTANCE = 1.4142135623730951;
     static final String DNA_SEQUENCE_TOO_SHORT_EXCEPTION = "Dna base length and bases amount should be at least 4";
     static final String INCORRECT_BASE_EXCEPTION = " is not a DNA base. Nitrogenous bases should be A, T, C or G";
     static final String INCONSISTENT_DNA_SEQUENCE_EXCEPTION = "Dna sequences length must be equal to the sequences amount";
+
 
 
     public HumanService(HumanRepository humanRepository) {
@@ -50,29 +40,27 @@ public class HumanService {
             return existingHuman;
         }
 
-        Multimap dnaMatrix = validateDna(dna);
+        char[][] dnaMatrix = validateDna(dna);
         boolean isMutant= processDna(dnaMatrix);
-
-//        boolean isMutant = true;
 
         Human human = new Human();
         human.setDna(dna);
         human.setIsMutant(isMutant);
 
-        //humanRepository.save(human);
+        humanRepository.save(human);
 
         return isMutant;
     }
 
-    private static Multimap<Character, Point> validateDna(String[] dna) throws ResourceFormatException {
+    private static char[][] validateDna(String[] dna) throws ResourceFormatException {
 
         if(dna.length < PATTERN_LENGTH) {
             throw new ResourceFormatException(DNA_SEQUENCE_TOO_SHORT_EXCEPTION);
         }
         int strandLength =  dna.length;
 
-        //Step 1 - Convert dna sequence to a multiMap to isolate similar bases
-        Multimap<Character,Point> dnaMatrix = ArrayListMultimap.create();
+        //Step 1 - Convert dna sequence to matrix
+        char[][] dnaMatrix = new char[strandLength][strandLength];
 
         for(int row = 0; row < strandLength; row++) {
             if(dna[row].length() != strandLength) {
@@ -83,36 +71,54 @@ public class HumanService {
                 if(!NITROGENOUS_BASES.contains(currentBase)) {
                     throw new ResourceFormatException(currentBase + INCORRECT_BASE_EXCEPTION);
                 }
-                Point newBase = new Point(row,column);
-                dnaMatrix.put(currentBase, newBase);
+                dnaMatrix[row][column] = currentBase;
             }
         }
         return dnaMatrix;
     }
 
 
-    private static boolean processDna(Multimap<Character, Point> dna) {
+    private static boolean processDna(char[][] dna) {
 
+        List<Point> previousMatch = new ArrayList<>();
 
-
-        for(Character base : NITROGENOUS_BASES) {
-            List<Point> points = new ArrayList<>(dna.get(base));
-            for(int i=0; i < points.size(); i++) {
-                Point point1 = points.get(i);
-
-                for(int j=i+1; j < points.size()-i; j++) {
-                    Point point2 = points.get(j);
-                    if(point1.distance(point2) == 1.0 && point2.x-point1.x == 1 && point2.y-point1.y == 0) {
-
+        //Step 2 -  Start traversing the matrix horizontally
+        for(int row = 0; row < dna.length; row++) {
+            for(int column = 0; column < dna.length; column++) {
+                for (Direction direction : Direction.values()) {
+        //Step 3 - Check the foru required direction
+                    List<Point> pattern = checkDirection(new Point(row, column), dna, direction);
+         //Step 4 - If pattern is at least size 4, we have a possible match. We should check if it's not a duplicated pattern
+         //or a subpattern of an existing larger  one.
+                    if(pattern.size() >= PATTERN_LENGTH) {
+                        if(previousMatch.isEmpty()) {
+                            previousMatch = pattern;
+                        }  else if(!previousMatch.containsAll(pattern)) {
+        //Step 5 - If we hit two patterns, then DNA is mutant.
+                            return true;
+                        }
                     }
                 }
+
             }
 
+            }
+
+    //Step 5 - if we don't have at least two matches, input is human DNA
+        return false;
+    }
+
+    private static List<Point> checkDirection(Point basepoint, char[][] dna, Direction direction) {
+        List<Point> pattern = new ArrayList<Point>();
+        Point nextPoint = new Point(basepoint.x, basepoint.y);
+        boolean inBounds = true;
+
+        while(inBounds && dna[basepoint.x][basepoint.y] == dna[nextPoint.x][nextPoint.y]) {
+            pattern.add(new Point(nextPoint.x, nextPoint.y));
+            nextPoint.setLocation(nextPoint.x + direction.label.x, nextPoint.y + direction.label.y);
+            inBounds = nextPoint.x >= 0 && nextPoint.y >= 0 && nextPoint.x < dna.length && nextPoint.y < dna.length;
         }
 
-
-
-        //Step 5 - if we don't have at least two matches, input is human DNA
-        return false;
+        return pattern;
     }
 }
