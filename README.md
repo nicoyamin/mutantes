@@ -229,5 +229,5 @@ El proyecto puede ser mejorado en muchos aspectos, los cuales pueden hablarse du
 - Queda pendiente la implementacion de un pipeline para CI/CD
 - Implementacion de una BD local (se consideró usar H2) para testing.
 
-Ante cualquier duda, consulta o informacion, no duden en contactarme por email: nicoyamin@hotmail.com.ar
+Ante cualquier duda, consulta o inconveniente, no duden en contactarme por email a nicoyamin@hotmail.com.ar
 
