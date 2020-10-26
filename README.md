@@ -205,9 +205,14 @@ Query Language para personalizar la informacion que queremos analizar.
 Para poder observar mejor todo lo que ofrece Prometheus, se ha configurado un dashboard donde pueden observarse distintas metricas 
 utilizacion, requests y recursos del server, ademas de las cuentas de ADN de mutantes/humanos y su ratio:
 
-- [Dashboard de Grafana]https://yaminnicolas.grafana.net/d/CygwzfpGk/mutants-app-dashboard?orgId=1)
+- [Dashboard de Grafana](https://yaminnicolas.grafana.net/d/CygwzfpGk/mutants-app-dashboard?orgId=1)
   - Usuario: yaminnicolas
   - Password: mutants1
+
+**IMPORTANTE!** Al depender del servicio de Prometheus como Datasoruce, si este se apaga por inactividad, es posible que las metricas se desactualicen, 
+por lo cual se recomienda cargar entradas de ADN nuevas para actualzair la informacion del dashboard.
+
+
 
 #### Automaticos
 
