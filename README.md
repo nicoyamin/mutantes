@@ -228,6 +228,8 @@ El proyecto puede ser mejorado en muchos aspectos, los cuales pueden hablarse du
 - Rendimiento de la API: Quedaron pendientes pruebas de carga usando JMeter. Tenia pensado incluso integrar estas metricas en un panel de Grafana para que puedan observarse desde alli, sin embargo por cuestiones de tiempo esto no pudo concretarse. Sin embargo, el rendimiento de los requests es aceptable desde el host en cloud, debido a que al parecer esta optimizado para abrir hilos de acuerdo al trafico y balancea la carga de manera automatica, ademas de que la BD Postgre esta optimizada para funcionar con Heroku. Sin embargo, no ocurre lo mismo al ejecutar la aplicacion localmente, donde se observa un renidmiento menor.
 - Queda pendiente la implementacion de un pipeline para CI/CD
 - Implementacion de una BD local (se consideró usar H2) para testing.
+- Todo el entorno de logs es practicamente inexistente, pero podira implementarse facilmente usnado Log4j y es un punto pendiente su posterior integracion con alguna herramienta de elastic search como Loki, que ofrece compatibildiad nativa con Grafana.
+- Documentacion de metodos y clases con JavaDocs.
 
 Ante cualquier duda, consulta o inconveniente, no duden en contactarme por email a nicoyamin@hotmail.com.ar
 
